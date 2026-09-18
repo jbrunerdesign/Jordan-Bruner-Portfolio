@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('portfolio-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tallis — Jordan Bruner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#0a0d16;
+    --ink:#ffffff;
+    --dim:rgba(255,255,255,0.62);
+    --hair:rgba(236,227,200,0.14);
+    --nav-border:rgba(255,255,255,0.85);
+    --nav-hover:rgba(255,255,255,0.12);
+    --nav-active:rgba(255,255,255,0.14);
+
+    /* fibonacci-derived spacing scale — every margin/gap on this page
+       is one of these values, nothing else */
+    --s1:8px; --s2:13px; --s3:21px; --s4:34px;
+    --s5:55px; --s6:89px; --s7:144px; --s8:233px;
+  }
+  :root[data-theme="white"]{
+    --paper:#faf9f6;
+    --ink:#14161c;
+    --dim:rgba(20,22,28,0.58);
+    --hair:rgba(20,22,28,0.13);
+    --nav-border:rgba(20,22,28,0.7);
+    --nav-hover:rgba(20,22,28,0.07);
+    --nav-active:rgba(20,22,28,0.1);
+  }
+  :root[data-theme="black"]{
+    --paper:#000000;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-snap-type:y proximity;}
+  body{
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(rgba(6,9,16,0.44), rgba(6,9,16,0.44)),
+      url("images/night-sky-bg.jpg");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Instrument Sans',sans-serif;
+    font-weight:400;
+    transition:background-color .3s ease, color .3s ease;
+  }
+  :root[data-theme="white"] body, :root[data-theme="black"] body{
+    background-image:none;
+  }
+  @media (max-width:760px) and (pointer:coarse){
+    body{
+      background-image:none;
+    }
+    :root:not([data-theme]){
+      --paper:#faf9f6;
+      --ink:#14161c;
+      --dim:rgba(20,22,28,0.58);
+      --hair:rgba(20,22,28,0.13);
+      --nav-border:rgba(20,22,28,0.7);
+      --nav-hover:rgba(20,22,28,0.07);
+      --nav-active:rgba(20,22,28,0.1);
+    }
+    :root:not([data-theme]) #texture{
+      display:none;
+    }
+  }
+  a{color:inherit;}
+  ::selection{background:var(--ink);color:var(--paper);}
+
+  #texture{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+  :root[data-theme="white"] #texture, :root[data-theme="black"] #texture{
+    display:none;
+  }
+
+  /* ---------- THEME TOGGLE ---------- */
+  .theme-toggle{
+    display:flex;
+    align-items:center;
+    gap:var(--s2);
+    margin-left:var(--s2);
+    padding-left:var(--s3);
+    border-left:1px solid var(--hair);
+  }
+  .theme-swatch{
+    width:16px; height:16px; border-radius:50%; flex-shrink:0;
+    padding:0; cursor:pointer;
+    border:1px solid var(--hair);
+    transition:border-color .2s ease, transform .2s ease, opacity .2s ease;
+    opacity:0.75;
+  }
+  .theme-swatch:hover{ opacity:1; }
+  .theme-swatch[aria-pressed="true"]{
+    border-color:var(--ink);
+    border-width:2px;
+    transform:scale(1.15);
+    opacity:1;
+  }
+  .theme-swatch--current{ background:linear-gradient(135deg,#0a0d16 40%,#4b3f66 75%,#e8b98a); }
+  .theme-swatch--white{ background:#faf9f6; }
+  .theme-swatch--black{ background:#000000; }
+  .dev-serial{
+    display:block;
+    width:fit-content;
+    margin-top:6px;
+    padding:2px 7px;
+    font-family:'SF Mono','Menlo',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.03em;
+    color:#39ff8f;
+    background:rgba(0,0,0,0.78);
+    border:1px solid rgba(57,255,143,0.4);
+    border-radius:4px;
+    pointer-events:none;
+    user-select:none;
+  }
+
+  section{
+    min-height:100svh;
+    scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:var(--s7) var(--s6);
+    position:relative;
+    z-index:1;
+  }
+  @media (max-width:760px){
+    section{padding:var(--s6) var(--s4);}
+  }
+
+  /* ---------- NAV ---------- */
+  .pill-nav{
+    position:fixed;
+    top:var(--s4);
+    left:var(--s6);
+    right:var(--s6);
+    z-index:6;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:transparent;
+    border:1.5px solid var(--nav-border);
+    border-radius:999px;
+    padding:var(--s1) var(--s3);
+    transition:opacity .3s ease, border-color .3s ease, transform .35s ease;
+  }
+  .pill-nav.nav-hidden{
+    transform:translateY(calc(-100% - var(--s6)));
+  }
+  @media (max-width:760px){
+    .pill-nav{ left:var(--s4); right:var(--s4); }
+  }
+  .nav-left, .nav-right{ display:flex; align-items:center; gap:var(--s1); }
+  .pill-nav a{
+    font-size:0.86rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    text-decoration:none;
+    color:var(--ink);
+    padding:var(--s1) var(--s3);
+    border-radius:999px;
+    transition:opacity .2s ease, background .2s ease;
+    white-space:nowrap;
+  }
+  .pill-nav a:hover{ opacity:0.7; background:var(--nav-hover); }
+  @media (max-width:640px){
+    .pill-nav{ padding:5px 10px; }
+    .pill-nav a{ padding:4px 6px !important; font-size:0.62rem !important; letter-spacing:0 !important; }
+    .nav-left, .nav-right{ gap:0px; }
+    .theme-toggle{ gap:4px; margin-left:2px; padding-left:4px; }
+    .theme-swatch{ width:9px; height:9px; }
+  }
+  @media (max-width:360px){
+    .pill-nav{ left:var(--s2); right:var(--s2); }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    align-items:flex-start;
+  }
+  .hero-row{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    gap:var(--s7);
+  }
+  .hero-quote{
+    max-width:480px;
+    text-align:right;
+  }
+  .hero-quote p{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(1.4rem,2.2vw,1.9rem);
+    line-height:1.4;
+    color:var(--ink);
+  }
+  .hero-quote span{
+    display:block;
+    margin-top:var(--s3);
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    color:var(--ink);
+  }
+  @media (max-width:800px){
+    .hero-row{ flex-direction:column; align-items:flex-start; gap:var(--s6); }
+    .hero-quote{ text-align:left; max-width:100%; }
+  }
+  .logo-mark{
+    width:clamp(76px,8vw,120px);
+    height:auto;
+    margin-bottom:var(--s4);
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:300;
+    font-size:clamp(1.6rem,2.6vw,2.2rem);
+    letter-spacing:0.005em;
+  }
+  .hero-inner p{
+    margin-top:var(--s2);
+    font-size:0.8rem;
+    color:var(--dim);
+    letter-spacing:0.02em;
+  }
+  .cue{
+    position:absolute;
+    bottom:var(--s5);
+    left:50%;
+    transform:translateX(-50%);
+    font-size:0.75rem;
+    color:var(--dim);
+    opacity:0.6;
+    transition:opacity .6s ease;
+  }
+
+  /* ---------- WORK ROOMS ---------- */
+  .room{
+    max-width:1800px;
+    width:100%;
+  }
+  .room-wrap{
+    display:grid;
+    grid-template-columns:minmax(260px,0.85fr) 1.7fr;
+    align-items:center;
+    gap:var(--s7);
+  }
+  @media (max-width:900px){
+    .room-wrap{ grid-template-columns:1fr; gap:var(--s5); }
+    .room-image{ order:2; }
+    .room-text{ order:1; }
+  }
+  .room .idx{
+    font-weight:300;
+    font-size:clamp(2.6rem,7vw,4.4rem);
+    color:var(--hair);
+    line-height:1;
+    margin-bottom:var(--s3);
+  }
+  .room-image img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:68vh;
+    object-fit:contain;
+    border-radius:var(--s3);
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);
+    cursor:pointer;
+  }
+  .room-image img:hover{
+    transform:scale(1.08);
+  }
+  .room h2{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:400;
+    font-size:clamp(1.5rem,2.8vw,2rem);
+    margin-bottom:var(--s1);
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .room .meta{
+    font-size:0.78rem;
+    color:var(--dim);
+    letter-spacing:0.02em;
+    border-top:1px solid var(--hair);
+    padding-top:var(--s2);
+    display:inline-block;
+    opacity:0;
+    transition:opacity 1s ease;
+    transition-delay:.15s;
+  }
+  .room.in-view h2{ opacity:1; transform:translateY(0); }
+  .room.in-view .meta{ opacity:1; }
+
+  .room .insight{
+    max-width:340px;
+    margin-top:var(--s4);
+    font-size:0.82rem;
+    font-style:italic;
+    color:var(--ink);
+    line-height:1.5;
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity 1.4s ease, transform 1.4s ease;
+  }
+  .room.considered .insight{ opacity:0.82; transform:translateY(0); }
+
+  /* ---------- CLOSING ---------- */
+  .closing{
+    align-items:flex-start;
+    min-height:auto;
+    justify-content:flex-start;
+    padding-top:var(--s5);
+    padding-bottom:var(--s5);
+    border-top:1px solid var(--hair);
+  }
+  .closing a.email{
+    font-size:clamp(1.1rem,2.2vw,1.5rem);
+    font-weight:300;
+    text-decoration:none;
+    border-bottom:1px solid var(--ink);
+    padding-bottom:2px;
+  }
+  .closing a.email:hover{ opacity:0.6; }
+  .socials{
+    margin-top:var(--s4);
+    display:flex;
+    gap:var(--s4);
+    font-size:0.78rem;
+    color:var(--dim);
+  }
+  .socials a{ text-decoration:none; }
+  .socials a:hover{ color:var(--ink); }
+  .copyright{
+    margin-top:var(--s5);
+    font-size:0.68rem;
+    color:var(--dim);
+    letter-spacing:0.02em;
+    opacity:0.7;
+  }
+
+  /* ---------- PROGRESS ---------- */
+  .progress{
+    position:fixed;
+    right:var(--s3);
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:var(--s2);
+    z-index:5;
+  }
+  .progress span{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--hair);
+    transition:background .4s ease;
+  }
+  .progress span.active{ background:var(--ink); }
+  @media (max-width:600px){ .progress{display:none;} }
+
+  a:focus-visible, button:focus-visible{
+    outline:1px solid var(--ink);
+    outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ transition:none !important; }
+    .room h2, .room .meta{ opacity:1 !important; transform:none !important; }
+  }
+</style>
+
+<style>
+  .case-header{
+    display:flex; justify-content:space-between; align-items:center;
+    max-width:1100px; margin:0 auto var(--s6); padding-top:var(--s7);
+    flex-wrap:wrap; gap:var(--s4) var(--s6);
+    align-self:flex-start;
+    width:100%;
+  }
+  .back-link{
+    font-family:'JetBrains Mono','Instrument Sans',sans-serif;
+    font-size:0.8rem; letter-spacing:0.05em; color:var(--dim);
+    text-decoration:none; display:inline-block; margin-bottom:var(--s3);
+  }
+  .back-link:hover{ color:var(--ink); }
+  .case-title{
+    font-family:'Fraunces',serif; font-optical-sizing:auto;
+    font-weight:300; font-size:clamp(2.6rem,6vw,4.4rem); color:var(--ink);
+  }
+  .case-meta{
+    display:flex; flex-wrap:wrap; gap:var(--s5) var(--s6);
+    font-size:0.86rem; color:var(--dim); letter-spacing:0.03em;
+    text-align:left;
+  }
+  .case-meta b{ display:block; color:var(--ink); font-weight:400; margin-top:6px; font-size:1.05rem; }
+
+  .case-hero-img{ max-width:1100px; margin:0 auto var(--s6); }
+  .case-hero-img img{ width:100%; border-radius:var(--s3); display:block; }
+
+  .case-quote{
+    max-width:1100px; margin:0 auto var(--s6); text-align:center;
+    padding-top:var(--s6); border-top:1px solid var(--hair);
+  }
+  .case-quote p{
+    font-family:'Fraunces',serif; font-optical-sizing:auto; font-style:italic;
+    font-weight:300; font-size:clamp(1.5rem,2.6vw,2.1rem); line-height:1.5; color:var(--ink);
+  }
+  .case-quote span{ display:block; margin-top:var(--s4); font-size:0.82rem; color:var(--dim); letter-spacing:0.05em; }
+
+  /* ---------- CHAPTER DIVIDER ---------- */
+  .chapter-divider{
+    max-width:900px; width:100%; margin:var(--s6) auto;
+    padding:var(--s6) 0; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s3);
+  }
+  .chapter-divider .chapter-eyebrow{
+    font-family:'JetBrains Mono','Instrument Sans',sans-serif; font-size:0.78rem;
+    letter-spacing:0.2em; color:var(--dim); text-transform:uppercase;
+  }
+  .chapter-divider h2{
+    font-family:'Fraunces',serif; font-optical-sizing:auto; font-style:italic;
+    font-weight:300; font-size:clamp(2.4rem,5.5vw,3.8rem); color:var(--ink);
+  }
+  .chapter-divider p{ font-size:0.95rem; line-height:1.6; color:var(--dim); max-width:560px; }
+
+  /* a chapter's text-only content, composed as one section instead of several stacked stops */
+  .chapter-text-grid{
+    max-width:900px; margin:0 auto var(--s6);
+    display:flex; flex-direction:column; gap:var(--s6);
+  }
+  .chapter-text-grid .item{
+    display:flex; align-items:flex-start; gap:var(--s5);
+    text-align:left;
+  }
+  .chapter-text-grid .item-head{
+    flex-shrink:0; width:190px;
+    display:flex; align-items:center; gap:var(--s3);
+  }
+  .chapter-text-grid .item-head .case-icon{ width:34px; height:34px; }
+  .chapter-text-grid .item-head .case-label{ margin-bottom:0; }
+  .chapter-text-grid p{ font-size:1.05rem; line-height:1.6; color:var(--ink); opacity:0.92; margin:0; }
+  @media (max-width:700px){
+    .chapter-text-grid .item{ flex-direction:column; gap:var(--s2); }
+    .chapter-text-grid .item-head{ width:auto; }
+  }
+
+  .hmw-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:var(--s6) var(--s7);
+    text-align:left;
+  }
+  .hmw-grid li{ margin-bottom:0 !important; max-width:none !important; }
+  @media (max-width:700px){ .hmw-grid{ grid-template-columns:1fr; gap:var(--s5); } }
+
+  /* ---------- RENDER CAROUSEL ---------- */
+  .render-carousel{
+    max-width:1100px; margin:0 auto var(--s7);
+    width:100%;
+  }
+  .render-carousel-viewport{
+    width:100%; overflow:hidden; border-radius:var(--s3);
+    aspect-ratio:3/2;
+  }
+  .render-carousel-track{
+    display:flex;
+    height:100%;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .render-carousel-slide{ flex:0 0 100%; width:100%; height:100%; }
+  .render-carousel-slide img{
+    width:100%; height:100%; display:block; cursor:zoom-in; object-fit:cover;
+  }
+  .render-carousel-controls{
+    display:flex; align-items:center; justify-content:center;
+    gap:var(--s4); margin-top:var(--s2);
+  }
+  .render-carousel-arrow{
+    width:40px; height:40px; border-radius:50%; flex-shrink:0;
+    border:1px solid var(--hair); background:transparent; color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:opacity .2s ease, background .2s ease;
+  }
+  .render-carousel-arrow:hover{ background:var(--nav-hover); }
+  .render-carousel-arrow svg{ width:16px; height:16px; }
+  .render-carousel-dots{ display:flex; align-items:center; gap:var(--s2); }
+  .render-carousel-dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--hair); border:none; padding:0; cursor:pointer;
+    transition:background .3s ease, transform .3s ease;
+  }
+  .render-carousel-dot.active{ background:var(--ink); transform:scale(1.3); }
+
+  .case-section{
+    max-width:1100px; margin:var(--s6) auto;
+    padding:var(--s6) 0; border-top:1px solid var(--hair);
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s3);
+  }
+  .case-icon{
+    flex-shrink:0; width:44px; height:44px;
+    color:var(--ink); opacity:0.85;
+  }
+  .case-icon svg{ width:100%; height:100%; display:block; }
+  .case-text{ width:100%; display:flex; flex-direction:column; align-items:center; }
+  .case-label{
+    font-family:'JetBrains Mono','Instrument Sans',sans-serif; font-size:0.78rem;
+    letter-spacing:0.08em; color:var(--dim); margin-bottom:var(--s4); text-transform:uppercase;
+  }
+  .case-section p{ font-size:1.25rem; line-height:1.65; color:var(--ink); opacity:0.92; max-width:760px; text-align:center; }
+  .case-section ul{ list-style:none; padding:0; width:100%; }
+  .case-section li{ margin-bottom:var(--s6); font-size:1.15rem; line-height:1.6; max-width:760px; margin-left:auto; margin-right:auto; }
+  .case-section li.li-icon{ display:flex; flex-direction:column; align-items:center; gap:var(--s3); text-align:center; }
+  .li-icon-mark{ flex-shrink:0; width:26px; height:26px; color:var(--ink); opacity:0.85; }
+  .li-icon-mark svg{ width:100%; height:100%; display:block; }
+  .case-section li b{ display:block; color:var(--ink); font-weight:500; margin-bottom:6px; font-size:1.25rem; }
+  .case-section li span{ color:var(--dim); }
+
+  .gallery{
+    max-width:1100px; margin:0 auto var(--s6);
+    padding-top:var(--s6); border-top:1px solid var(--hair);
+    display:grid; grid-template-columns:1fr 1fr; gap:var(--s5);
+  }
+  .gallery img{
+    width:100%;
+    aspect-ratio:4/3;
+    object-fit:cover;
+    border-radius:var(--s3);
+    display:block;
+    cursor:zoom-in;
+    transition:opacity .2s ease;
+  }
+  .gallery img:hover{ opacity:0.9; }
+  .case-hero-img img{ cursor:zoom-in; }
+
+  .lightbox{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(5,7,10,0.92);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:var(--s6);
+    cursor:zoom-out;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{
+    max-width:100%;
+    max-height:100%;
+    border-radius:var(--s2);
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .gallery.single{ grid-template-columns:1fr; }
+  .gallery.triple{ grid-template-columns:1fr 1fr 1fr; }
+  @media (max-width:700px){ .gallery{grid-template-columns:1fr;} }
+
+  .case-close{
+    max-width:1100px; margin:0 auto var(--s8, 233px);
+    padding-top:var(--s6); border-top:1px solid var(--hair);
+    display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--s3);
+  }
+  .case-close p{ font-size:1.3rem; line-height:1.7; color:var(--ink); opacity:0.9; max-width:760px; }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  main{ position:relative; z-index:1; padding:0 var(--s4); display:flex; flex-direction:column; align-items:center; }
+
+  .placeholder-img{
+    width:100%;
+    aspect-ratio:4/3;
+    background:#ffffff;
+    border-radius:var(--s3);
+    display:block;
+  }
+  .placeholder-cap{
+    margin-top:var(--s1);
+    font-size:0.68rem;
+    color:var(--dim);
+    letter-spacing:0.03em;
+  }
+
+  .gallery-feature{
+    max-width:1100px; margin:0 auto var(--s7);
+    width:100%;
+  }
+  .gallery-feature img{
+    width:100%;
+    height:auto;
+    border-radius:var(--s3);
+    display:block;
+    cursor:zoom-in;
+    transition:opacity .2s ease;
+  }
+  .gallery-feature img:hover{ opacity:0.9; }
+  .gallery-feature figcaption{
+    margin-top:var(--s3);
+    font-size:0.78rem;
+    letter-spacing:0.03em;
+    color:var(--dim);
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<h1 class="sr-only">Tallis — Dyson personal climate device, case study</h1>
+<canvas id="texture" aria-hidden="true"></canvas>
+
+<nav class="pill-nav">
+  <div class="nav-left">
+    <a href="index.html#work" aria-current="page">work</a>
+    <a href="about.html">about</a>
+    <a href="resume.html" target="_blank" rel="noopener">resume</a>
+    <a href="gallery.html">gallery</a>
+  </div>
+  <div class="nav-right">
+    <a href="contact.html">contact</a>
+    <div class="theme-toggle" data-theme-toggle role="group" aria-label="Background theme">
+      <button type="button" class="theme-swatch theme-swatch--current" data-theme-set="" aria-label="Current theme"></button>
+      <button type="button" class="theme-swatch theme-swatch--white" data-theme-set="white" aria-label="White theme"></button>
+      <button type="button" class="theme-swatch theme-swatch--black" data-theme-set="black" aria-label="Black theme"></button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="case-header">
+    <div>
+      <a class="back-link" href="index.html#work">&larr; work</a>
+      <div class="case-title">Tallis</div>
+    </div>
+    <div class="case-meta">
+      <div>CATEGORY<b>Home Appliances</b></div>
+      <div>DURATION<b>14 Weeks</b></div>
+    </div>
+  </div>
+
+  <div class="case-hero-img">
+    <img src="images/tallis-hero-render.jpg" alt="Tallis hero render">
+  </div>
+
+  <div class="case-quote">
+    <p>&ldquo;In reality, every decision boils down to a right and a wrong choice depending on what you want the outcome to be.&rdquo;</p>
+    <span>&mdash; Jordan Bruner</span>
+  </div>
+
+  <div class="chapter-divider">
+    <div class="chapter-eyebrow">01 &mdash; Overview</div>
+    <h2>The Brief</h2>
+    <p>What Tallis needed to solve, who it's for, and the Dyson lens it was designed through.</p>
+  </div>
+
+  <div class="chapter-text-grid">
+    <div class="item">
+      <div class="item-head">
+        <div class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4" y="3" width="16" height="18" rx="1.5"/><line x1="7.5" y1="8" x2="16.5" y2="8"/><line x1="7.5" y1="12" x2="16.5" y2="12"/><line x1="7.5" y1="16" x2="13" y2="16"/></svg></div>
+        <div class="case-label">Project Brief</div>
+      </div>
+      <p>Design a desk-scale personal climate solution that explores localized thermal comfort beyond traditional room-based systems &mdash; improving individual comfort in shared spaces without disrupting anyone else in the room.</p>
+    </div>
+    <div class="item">
+      <div class="item-head">
+        <div class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 3l7.5 4.3v9.4L12 21l-7.5-4.3V7.3L12 3z"/><circle cx="12" cy="12" r="2.6"/></svg></div>
+        <div class="case-label">Brand &mdash; Dyson</div>
+      </div>
+      <p>Dyson is defined by engineering-led innovation: function-driven form, visible precision, and a belief that better engineering leads to better living. The concept treats the device not as a product extension, but as a new reference point for Dyson's future climate-focused products.</p>
+    </div>
+    <div class="item">
+      <div class="item-head">
+        <div class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5"/></svg></div>
+        <div class="case-label">Who</div>
+      </div>
+      <p>Someone who values elevated comfort while working &mdash; drawn to solutions that feel premium and efficient, while staying mindful of sustainable, responsible energy use.</p>
+    </div>
+  </div>
+
+  <div class="chapter-divider">
+    <div class="chapter-eyebrow">02 &mdash; Research &amp; Process</div>
+    <h2>Finding the Form</h2>
+    <p>The questions that shaped the brief, and the sketches that carried Tallis to its final geometry.</p>
+  </div>
+
+  <div class="case-section" style="border-top:none;padding-top:0;">
+    <div class="case-text">
+      <div class="case-label">How Might We</div>
+      <ul class="hmw-grid">
+        <li class="li-icon"><div class="li-icon-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none"/></svg></div><div><b>Localized comfort.</b><span>Home HVAC struggles near windows and exterior walls &mdash; how might we deliver precise control that follows the user, not the room?</span></div></li>
+        <li class="li-icon"><div class="li-icon-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12.5 3L6 13h5l-1 8 7-11h-5l1-7z" stroke-linejoin="round"/></svg></div><div><b>Faster response.</b><span>Central systems react slowly to small shifts &mdash; how might comfort respond instantly instead of waiting on room-wide changes?</span></div></li>
+        <li class="li-icon"><div class="li-icon-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 10v4h3l5 4V6L7 10H4z"/><line x1="17" y1="9" x2="21" y2="15"/><line x1="21" y1="9" x2="17" y2="15"/></svg></div><div><b>Quiet operation.</b><span>Fans and heaters are loud during calls and deep work &mdash; how might heating and cooling stay acoustically unobtrusive?</span></div></li>
+        <li class="li-icon"><div class="li-icon-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 9h6V4M20 15h-6v5M9 4L4 9M15 20l5-5"/></svg></div><div><b>Less clutter.</b><span>Bulky devices disrupt small workspaces &mdash; how might a compact object integrate into modern home offices?</span></div></li>
+      </ul>
+      <div class="case-icon" style="margin-top:var(--s7);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14.5 3.5l6 6-10 10L4 21l1.5-6.5 9-11z"/><line x1="12.5" y1="5.5" x2="18.5" y2="11.5"/></svg></div>
+      <div class="case-label">Ideation &amp; Refinement</div>
+      <p>The right-triangular-pyramid direction combined hard angles with rounded edges in a way that stayed geometrically proportional when divided within itself &mdash; symmetry that reflects a curated environment. The rubber handle and analog buttons were later removed in favor of a seamless capacitive touch display, once it was clear the object would remain stationary.</p>
+    </div>
+  </div>
+
+  <div class="gallery">
+    <div><img src="images/tallis-mood-board.jpg" alt="Tallis mood board" style="border-radius:var(--s3);width:100%;display:block;"></div>
+    <div><img src="images/tallis-inspiration-board.jpg" alt="Tallis inspiration board" style="border-radius:var(--s3);width:100%;display:block;"></div>
+  </div>
+
+  <div class="gallery" style="border-top:none;padding-top:0;">
+    <div><img src="images/tallis-ideation-sketches.jpg" alt="Tallis ideation sketches" style="border-radius:var(--s3);width:100%;display:block;"></div>
+    <div><img src="images/tallis-refinement-sketches.jpg" alt="Tallis refinement sketches" style="border-radius:var(--s3);width:100%;display:block;"></div>
+  </div>
+
+  <div class="chapter-divider">
+    <div class="chapter-eyebrow">03 &mdash; Final Design</div>
+    <h2>The Finished Object</h2>
+    <p>The finished object, and how it lives on a desk.</p>
+  </div>
+
+  <div class="render-carousel" data-carousel>
+    <div class="render-carousel-viewport">
+      <div class="render-carousel-track">
+        <div class="render-carousel-slide"><img src="images/tallis-final-render-resolved-form.jpg" alt="Tallis final render — resolved form"></div>
+        <div class="render-carousel-slide"><img src="images/tallis-final-render-1.jpg" alt="Tallis final render 1"></div>
+        <div class="render-carousel-slide"><img src="images/tallis-final-render-2.jpg" alt="Tallis final render 2"></div>
+        <div class="render-carousel-slide"><img src="images/tallis-final-render-3.jpg" alt="Tallis final render 3"></div>
+        <div class="render-carousel-slide"><img src="images/tallis-final-render-4.jpg" alt="Tallis final render 4"></div>
+      </div>
+    </div>
+    <div class="render-carousel-controls">
+      <button class="render-carousel-arrow" data-prev type="button" aria-label="Previous render"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="render-carousel-dots" data-dots></div>
+      <button class="render-carousel-arrow" data-next type="button" aria-label="Next render"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+
+  <div class="chapter-divider">
+    <div class="chapter-eyebrow">04 &mdash; How It Works</div>
+    <h2>Two Sides of the Same Face</h2>
+    <p>The same ceramic front panel drives both warmth and cool, switching modes without moving parts.</p>
+  </div>
+
+  <div class="chapter-text-grid">
+    <div class="item">
+      <div class="item-head">
+        <div class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 2s-5 5-5 10a5 5 0 0 0 10 0c0-2.5-1.5-4-2.5-5.5.3 2-1 3-2 3s-1.8-1-1.2-2.3C11.8 6 12.5 4.5 12 2z"/></svg></div>
+        <div class="case-label">Radiant Heat</div>
+      </div>
+      <p>A ceramic heating element built into the front face radiates warmth directly outward, heating the space in front of it up to 95&deg;F without needing to heat the surrounding air first.</p>
+    </div>
+    <div class="item">
+      <div class="item-head">
+        <div class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg></div>
+        <div class="case-label">Laminar Cool</div>
+      </div>
+      <p>In cooling mode, the same face releases a smooth, laminar stream of air &mdash; cooling the space around you evenly, without the turbulence or noise of a traditional fan.</p>
+    </div>
+  </div>
+
+  <div class="render-carousel" data-carousel>
+    <div class="render-carousel-viewport">
+      <div class="render-carousel-track">
+        <div class="render-carousel-slide"><img src="images/tallis-in-context-desk-setup.jpg" alt="Tallis in context — desk setup"></div>
+        <div class="render-carousel-slide"><img src="images/tallis-in-context-2.jpg" alt="Tallis in context 2"></div>
+        <div class="render-carousel-slide"><img src="images/tallis-in-context-3.jpg" alt="Tallis in context 3"></div>
+      </div>
+    </div>
+    <div class="render-carousel-controls">
+      <button class="render-carousel-arrow" data-prev type="button" aria-label="Previous render"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="render-carousel-dots" data-dots></div>
+      <button class="render-carousel-arrow" data-next type="button" aria-label="Next render"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+
+  <div class="case-close">
+    <div class="case-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
+    <div class="case-text">
+      <div class="case-label">Summary</div>
+      <p>This project shifts temperature control from the room to the individual &mdash; radiant heating, quiet operation, and a screenless interface deliver precise comfort without disrupting shared spaces. The result is a premium personal climate device that functions as both a performance tool and a refined desk object.</p>
+    </div>
+  </div>
+</main>
+
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+
+<script>
+(function(){
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const clickable = document.querySelectorAll('.gallery img, .case-hero-img img, .gallery-feature img, .render-carousel-slide img');
+
+  clickable.forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('open');
+    });
+  });
+
+  lightbox.addEventListener('click', () => {
+    lightbox.classList.remove('open');
+    lightboxImg.src = '';
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+    }
+  });
+})();
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll('[data-carousel]').forEach(carousel => {
+    const track = carousel.querySelector('.render-carousel-track');
+    const slides = [...track.children];
+    const dotsWrap = carousel.querySelector('[data-dots]');
+    const prevBtn = carousel.querySelector('[data-prev]');
+    const nextBtn = carousel.querySelector('[data-next]');
+    let index = 0;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'render-carousel-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to render ${i + 1}`);
+      dot.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(dot);
+    });
+    const dots = [...dotsWrap.children];
+
+    function goTo(i){
+      index = (i + slides.length) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((d, di) => d.classList.toggle('active', di === index));
+    }
+    prevBtn.addEventListener('click', () => goTo(index - 1));
+    nextBtn.addEventListener('click', () => goTo(index + 1));
+  });
+})();
+</script>
+
+<script>
+(function(){
+  const KEY = 'portfolio-theme';
+  const root = document.documentElement;
+  const toggle = document.querySelector('[data-theme-toggle]');
+  if(!toggle) return;
+  const buttons = [...toggle.querySelectorAll('[data-theme-set]')];
+
+  function sync(){
+    const current = root.getAttribute('data-theme') || '';
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeSet === current)));
+  }
+  sync();
+
+  buttons.forEach(b => {
+    b.addEventListener('click', () => {
+      const theme = b.dataset.themeSet;
+      if(theme){ root.setAttribute('data-theme', theme); }
+      else{ root.removeAttribute('data-theme'); }
+      try{ localStorage.setItem(KEY, theme); }catch(e){}
+      sync();
+    });
+  });
+})();
+</script>
+<script>
+(function(){
+  const nav = document.querySelector('.pill-nav');
+  if(!nav) return;
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  function onScroll(){
+    const y = window.scrollY;
+    if(y > lastY && y > 80){
+      nav.classList.add('nav-hidden');
+    } else {
+      nav.classList.remove('nav-hidden');
+    }
+    lastY = y;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if(!ticking){
+      window.requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, {passive:true});
+})();
+</script>
+
+<script>
+(function(){
+  const canvas = document.getElementById('texture');
+  const ctx = canvas.getContext('2d');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let w, h, dpr, stars, poleX, poleY;
+  const ROTATION_PERIOD = 26 * 60 * 1000; // one full turn of the sky every 26 minutes — felt, never chased
+  const startTime = performance.now();
+  const BLOOM_MS = 2800; // the single "eyes opening wider" moment, once, on load
+
+  function build(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    // the pole sits off the top of the frame — everything wheels slowly around it,
+    // the way stars circle a point in the sky rather than drifting at random
+    poleX = w*0.5;
+    poleY = -h*0.6;
+
+    stars = Array.from({length:180}, () => {
+      const radius = Math.abs(poleY) + Math.random()*h*1.6;
+      const angle = Math.random()*Math.PI*2;
+      return {
+        radius,
+        angle,
+        size: Math.random() < 0.08 ? 1.6+Math.random()*1 : 0.6+Math.random()*0.7,
+        twinklePhase: Math.random()*Math.PI*2,
+        twinkleSpeed: 0.0003 + Math.random()*0.0006,
+        baseAlpha: 0.35 + Math.random()*0.55
+      };
+    });
+  }
+  window.addEventListener('resize', build);
+  build();
+
+  function frame(now){
+    ctx.clearRect(0,0,w,h);
+
+    const elapsed = now - startTime;
+    const bloom = reduced ? 1 : Math.min(1, elapsed/BLOOM_MS);
+    const bloomEase = 1 - Math.pow(1-bloom, 3);
+
+    const rotation = reduced ? 0 : (elapsed/ROTATION_PERIOD) * Math.PI*2;
+    const skyLimit = h*0.56;   // roughly where the grass begins in the photo
+    const fadeBand = 90;        // soft dissolve above the horizon, not a hard cutoff
+
+    stars.forEach(s=>{
+      const a = s.angle + rotation; // drifts on its own schedule, indifferent to the visitor
+      const x = poleX + Math.cos(a)*s.radius;
+      const y = poleY + Math.sin(a)*s.radius;
+      if(x < -10 || x > w+10 || y < -10 || y > skyLimit) return;
+
+      const horizonFade = Math.min(1, Math.max(0, (skyLimit - y)/fadeBand));
+      const twinkle = reduced ? 1 : (Math.sin(now*s.twinkleSpeed + s.twinklePhase)+1)/2;
+      const alpha = s.baseAlpha * (0.55 + twinkle*0.45) * bloomEase * horizonFade;
+
+      ctx.beginPath();
+      ctx.arc(x, y, s.size, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(236,227,200,${alpha.toFixed(3)})`;
+      ctx.fill();
+    });
+
+    if(!reduced) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  if(reduced) frame(performance.now()+BLOOM_MS+1);
+})();
+</script>
+<script>
+(function(){
+  const PAGE_CODE = 'TALLIS';
+  const KEY = 'portfolio-devmode';
+
+  function clearLabels(){
+    document.querySelectorAll('.dev-serial').forEach(el => el.remove());
+  }
+
+  function labelImages(){
+    clearLabels();
+    document.querySelectorAll('img:not(#lightbox-img)').forEach((img, i) => {
+      const label = document.createElement('div');
+      label.className = 'dev-serial';
+      label.textContent = PAGE_CODE + '-' + String(i + 1).padStart(2, '0');
+      img.insertAdjacentElement('afterend', label);
+    });
+  }
+
+  function applyState(){
+    let on = false;
+    try{ on = localStorage.getItem(KEY) === '1'; }catch(e){}
+    if(on){ labelImages(); } else { clearLabels(); }
+  }
+  applyState();
+
+  const trigger = document.getElementById('dev-trigger');
+  if(trigger){
+    trigger.addEventListener('click', () => {
+      let on = false;
+      try{ on = localStorage.getItem(KEY) === '1'; }catch(e){}
+      try{
+        if(on){ localStorage.removeItem(KEY); } else { localStorage.setItem(KEY, '1'); }
+      }catch(e){}
+      applyState();
+    });
+  }
+})();
+</script>
+</body>
+</html>
